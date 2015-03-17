@@ -16,13 +16,14 @@ if __name__ == "__main__":
     filter1 = SourceFilter("../FlightData.dat")
     filter2 = AltitudeFilter()
     filter3 = TemperatureFilter()
-    #filter4 = FormatOutputFilter()
-    filter4 = SinkFilter()
+    filter4 = FormatOutputFilter()
+    filter5 = SinkFilter()
     
     """ Here we connect the filters starting with the sink filter (Filter 1) which
     	we connect to Filter2 the middle filter. Then we connect Filter2 to the	source filter (Filter3).
         """
 
+    filter5.connect(filter4) 
     filter4.connect(filter3) 
     filter3.connect(filter2) # This essentially says, "connect Filter3 input port to Filter2 output port
     filter2.connect(filter1) # This essentially says, "connect Filter2 intput port to Filter1 output port
@@ -32,3 +33,4 @@ if __name__ == "__main__":
     filter2.start()    
     filter3.start()
     filter4.start()
+    filter5.start()

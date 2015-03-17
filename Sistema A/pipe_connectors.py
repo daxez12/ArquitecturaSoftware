@@ -7,7 +7,7 @@ class PipedOutputStream:
     
     def __init__(self):
         self.__sink = None
-        self._cond = threading.Condition()
+        self._cond = threading.Condition()    
     
     def connect(self, sink):
         self._cond.acquire()

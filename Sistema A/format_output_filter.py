@@ -122,8 +122,9 @@ class FormatOutputFilter(FilterFramework):
                     
                         #convertimos el arreglo de 8 bytes en un numero decimal
                         doubleValue = struct.unpack('d', byteArray)[0]
-                    
+                        pies = doubleValue * 0.38
                         #print "{0} -- ID = {1} {2}".format(timeStamp.strftime(timeStampFormat), idMeasurement, doubleValue)
+                        print "{0} pies = {1} metros".format(doubleValue, pies)
                         
                     #Presentacion de los datos de Presion
                     if idMeasurement == 3:
@@ -132,7 +133,7 @@ class FormatOutputFilter(FilterFramework):
                     
                         #convertimos el arreglo de 8 bytes en un numero decimal
                         doubleValue = struct.unpack('d', byteArray)[0]
-                    
+                        
                         #print "{0} -- ID = {1} {2}".format(timeStamp.strftime(timeStampFormat), idMeasurement, doubleValue)
 
                     #Presentacion de los datos de Temperatura
