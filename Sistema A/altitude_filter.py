@@ -12,6 +12,7 @@ class AltitudeFilter(FilterFramework):
             try:
                 data = self.readFilterInputPort()
                 read += 1
+                
                 self.writeFilterOutputPort(data)
                 written += 1
             

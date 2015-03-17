@@ -88,7 +88,7 @@ class FormatOutputFilter(FilterFramework):
                     #Presentacion de los datos de Tiempo
                     if idMeasurement == 0:
                         timeStamp = datetime.datetime.fromtimestamp(measurement/1000.0)
-                        print "{0} -- ID = {1}".format(timeStamp.strftime(timeStampFormat), idMeasurement)
+                        #print "{0} -- ID = {1}".format(timeStamp.strftime(timeStampFormat), idMeasurement)
                         
                         """ Here we pick up a measurement (ID = 4 in this case), but you can pick up
 				        any measurement you want to. All measurements in the stream are
