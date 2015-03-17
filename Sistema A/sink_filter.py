@@ -1,117 +1,43 @@
-import datetime
-import struct
-from filter_framework import FilterFramework
+from filter_framework import FilterFramework, EndOfStreamException
 
 
 class SinkFilter(FilterFramework):
-    """ This class serves as an example for using the SinkFilterTemplate for creating a sink filter. This particular
-        filter reads some input from the filter's input port and does the following:
-
-        1) It parses the input stream and "decommutates" the measurement ID
-        2) It parses the input steam for measurments and "decommutates" measurements, storing the bits in a long word.
-
-        This filter illustrates how to convert the byte stream data from the upstream filterinto useable data found in
-        the stream: namely time (long type) and measurements (double type).
+    """ A template for creating sink filters. The details of threading, connections writing output
+        are contained in the FilterFramework (super) class. In order to use this template the program should rename the class.
+        The template includes the run() method which is executed when the filter is started.
+        The run() method is the guts of the filter and is where the programmer should put their filter specific code.
+        In the template there is a main read-write loop for reading from the input port of the filter. The programmer is
+        responsible for writing the data to a file, or device of some kind. This template assumes that the filter is a sink
+        filter that reads data from the input file and writes the output from this filter to a file or device of some kind.
+        In this case, only the input port is used by the filter. In cases where the filter is a standard filter or a source
+        filter, you should use the FilterTemplate or the SourceFilterTemplate as a starting point for creating
+        standard or source filters.   
         """
+        
         
     def __init__(self):
         FilterFramework.__init__(self)
         
-        
     def run(self):
-        """ TimeStamp is used to compute time .
-		    TimeStampFormat is used to format the time value so that it can be easily printed
-		    to the terminal.
-            """
-            
-        timeStamp = 0
-        timeStampFormat = "%Y %m %d::%H:%M:%S:%f"
-        measurementLength = 8   # This is the length of all measurements (including time) in bytes
-        idLength = 4            # This is the length of IDs in the byte stream
-        
-        dataByte = 0            # This is the data byte read from the stream
-        bytesRead = 0           # This is the number of bytes read from the stream
-        
-        measurement = 0         # This is the word used to store all measurements - conversions are illustrated.
-        idMeasurement = 0       # This is the measurement id
-        
-        # We announce to the world that we are alive ...
-        print "{0}::Sink reading".format(self.getName())
-        
         while True:
+            """ This is the main processing loop for the filter. Since this
+                is a sink filter, we read until there is no more data
+             	available on the input port.
+                """
             try:
-                """ We know that the first data coming to this filter is going to be an ID and
-				    that it is IdLength long. So we first decommutate the ID bytes.
+                """ Here we read a byte from the input port. Note that regardless how the data is written, data must be read one
+                    byte at a time from the input pipe. This has been done to adhere to the pipe and filter paradigm and provide a
+                    high degree of portability between filters. However, you must convert output data as needed on your own.
                     """
-                                               
-                idMeasurement = 0
-                i = 0
+                            
+                dataByte = self.readFilterInputPort()
                 
-                while i < idLength:
-                    dataByte = self.readFilterInputPort() # This is where we read the byte from the stream...
-                    
-                    idMeasurement = idMeasurement << 8     # We append the byte on to ID ...
-                    idMeasurement = idMeasurement | dataByte                
-                    bytesRead += 1
-                    i += 1
+                # The programmer can insert code for the filter operations	here to include writing the data to some device or file.
                 
-                """ Here we read measurements. All measurement data is read as a stream of bytes
-				    and stored as a long value. This permits us to do bitwise manipulation that
-				    is neccesary to convert the byte stream into data words. Note that bitwise
-				    manipulation is not permitted on any kind of floating point types in Java.
-				    If the id = 0 then this is a time value and is therefore a long value - no
-				    problem. However, if the id is something other than 0, then the bits in the
-				    long value is really of type double and we need to convert the value using
-				    Double.longBitsToDouble(long val) to do the conversion which is illustrated.
-				    below.
+                """ When we reach the end of the input stream, an exception is thrown which is shown below. At this point, you should
+                    finish up any processing, close your ports and exit.
                     """
-                
-                measurement = 0
-                i = 0
-                while i < measurementLength:
-                    dataByte = self.readFilterInputPort()
-                    measurement = measurement << 8
-                    measurement = measurement | dataByte
-                    bytesRead += 1
-                    i += 1
-                
-                    """ Here we look for an ID of 0 which indicates this is a time measurement.
-				        Every frame begins with an ID of 0, followed by a time stamp which correlates
-				        to the time that each proceeding measurement was recorded. Time is stored
-				        in milliseconds since Epoch. This allows us to use datetime to
-				        retrieve time and also use text format classes to format the output into
-				        a form humans can read. So this provides great flexibility in terms of
-				        dealing with time arithmetically or for string display purposes. This is
-				        illustrated below.
-                        """
-                        
-                    if idMeasurement == 0:
-                        timeStamp = datetime.datetime.fromtimestamp(measurement/1000.0)
-                    
-        
-                        """ Here we pick up a measurement (ID = 4 in this case), but you can pick up
-				        any measurement you want to. All measurements in the stream are
-				        decommutated by this class. Note that all data measurements are double types.
-				        This illustrates how to convert the bits read from the stream into a double
-				        type. 
-                    
-                        Lo siguiente en espaniol por claridad :P
-                        Esto es bastante simple pasando el valor de tipo long a un arreglo de bytes
-                        y despues pasandolo a un tipo double. Hay que tener cuidado aqui con el primer
-                        parametro que se le pasa al metodo pack, esto indica los endianess que se usan,
-                        esto es dependiente del procesador donde se este ejecutando. Puede considerar 
-                        cambiarlo por ">Q" para big-endian o "<Q" para little endian, el "@Q" es para el nativo.
-                        """
-                    
-                    if idMeasurement == 4:
-                        #convertimos la medida de 8 bytes en un arreglo de 8 bytes
-                        byteArray = struct.pack("@Q", measurement) 
-                    
-                        #convertimos el arreglo de 8 bytes en un numero decimal
-                        doubleValue = struct.unpack('d', byteArray)[0]
-                    
-                        print "{0} -- ID = {1} {2}".format(timeStamp.strftime(timeStampFormat), idMeasurement, doubleValue)
-            except:
+                                
+            except EndOfStreamException:
                 self.closePorts()
-                print "{0}::Sink Exiting; bytes read: {1}".format(self.getName(), bytesRead)
                 break

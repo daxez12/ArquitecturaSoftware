@@ -1,5 +1,6 @@
 from source_filter import SourceFilter
 from altitude_filter import AltitudeFilter
+from format_output_filter import FormatOutputFilter
 from sink_filter import SinkFilter
 
 """ An example to illustrate how to use the PlumberTemplate to create a main thread that
@@ -13,12 +14,14 @@ if __name__ == "__main__":
     # Here we instantiate three filters.
     filter1 = SourceFilter("../FlightData.dat")
     filter2 = AltitudeFilter()
-    filter3 = SinkFilter()
+    filter3 = FormatOutputFilter()
+    filter4 = SinkFilter()
     
     """ Here we connect the filters starting with the sink filter (Filter 1) which
     	we connect to Filter2 the middle filter. Then we connect Filter2 to the	source filter (Filter3).
         """
-    
+
+    filter4.connect(filter3) # This essentially says, "connect Filter3 input port to Filter2 output port
     filter3.connect(filter2) # This essentially says, "connect Filter3 input port to Filter2 output port
     filter2.connect(filter1) # This essentially says, "connect Filter2 intput port to Filter1 output port
     
@@ -26,3 +29,4 @@ if __name__ == "__main__":
     filter1.start()  
     filter2.start()    
     filter3.start()
+    filter4.start()
