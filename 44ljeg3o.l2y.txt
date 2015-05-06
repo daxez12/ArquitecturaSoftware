@@ -1,0 +1,31 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	new file:   Programa 02/Sistema B/ECSConsole.java
+#	new file:   Programa 02/Sistema B/ECSMonitor.java
+#	new file:   Programa 02/Sistema B/ECStart.bat
+#	new file:   Programa 02/Sistema B/EMStart.bat
+#	new file:   Programa 02/Sistema B/EMStart.sh
+#	new file:   Programa 02/Sistema B/EventManager.java
+#	new file:   Programa 02/Sistema B/EventPackage/Event.java
+#	new file:   Programa 02/Sistema B/EventPackage/EventManagerInterface.java
+#	new file:   Programa 02/Sistema B/EventPackage/EventQueue.java
+#	new file:   Programa 02/Sistema B/EventPackage/RMIEventManagerInterface.java
+#	new file:   Programa 02/Sistema B/EventUtility.java
+#	new file:   Programa 02/Sistema B/FireController.java
+#	new file:   Programa 02/Sistema B/FireSensor.java
+#	new file:   Programa 02/Sistema B/HumidityController.java
+#	new file:   Programa 02/Sistema B/HumiditySensor.java
+#	new file:   Programa 02/Sistema B/InstrumentationPackage/Indicator.java
+#	new file:   Programa 02/Sistema B/InstrumentationPackage/MessageWindow.java
+#	new file:   Programa 02/Sistema B/SecuritySensor.java
+#	new file:   Programa 02/Sistema B/TemperatureController.java
+#	new file:   Programa 02/Sistema B/TemperatureSensor.java
+#	new file:   Programa 02/Sistema B/TermioPackage/Termio.java
+#
+
+"Agregado el Sistema B"
